@@ -12,4 +12,4 @@
  *  See the plugin documentation for more information.
  *  
 }*
-${ press.Plugin.compressedJSTag() }
+${ press.Plugin.compressedJSTag(_arg) }

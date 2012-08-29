@@ -1,11 +1,11 @@
 package press;
 
-import java.lang.reflect.Method;
-
 import play.PlayPlugin;
 import play.mvc.Http.Request;
 import play.mvc.Http.Response;
 import play.vfs.VirtualFile;
+
+import java.lang.reflect.Method;
 
 public class Plugin extends PlayPlugin {
     static ThreadLocal<RequestManager> rqManager = new ThreadLocal<RequestManager>();
@@ -67,15 +67,15 @@ public class Plugin extends PlayPlugin {
     /**
      * Outputs the tag indicating where the compressed JS should be included.
      */
-    public static String compressedJSTag() {
-        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_SCRIPT);
+    public static String compressedJSTag(String key) {
+        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_SCRIPT, key);
     }
 
     /**
      * Outputs the tag indicating where the compressed CSS should be included.
      */
-    public static String compressedCSSTag() {
-        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_STYLE);
+    public static String compressedCSSTag(String key) {
+        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_STYLE, key);
     }
 
     @Override

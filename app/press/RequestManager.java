@@ -49,11 +49,16 @@ public class RequestManager {
         return result;
     }
 
-    public String compressedTag(boolean rqType) {
+    public String compressedTag(boolean rqType, String key) {
         RequestHandler handler = getRequestHandler(rqType);
         if (performCompression()) {
-            String requestKey = handler.closeRequest();
-            return handler.getTag(handler.getCompressedUrl(requestKey));
+          String requestKey;
+          if (key != null) {
+            handler.getSourceManager().requestKey = key;
+            requestKey = key;
+          }
+          else requestKey =  handler.closeRequest();
+          return handler.getTag(handler.getCompressedUrl(requestKey));
         }
         return "";
     }
