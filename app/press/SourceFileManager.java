@@ -1,13 +1,5 @@
 package press;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import play.PlayPlugin;
 import play.cache.Cache;
 import play.exceptions.UnexpectedException;
@@ -17,6 +9,10 @@ import play.mvc.Http.Response;
 import play.templates.JavaExtensions;
 import play.vfs.VirtualFile;
 import press.io.FileIO;
+
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public abstract class SourceFileManager extends PlayPlugin {
 
@@ -174,6 +170,9 @@ public abstract class SourceFileManager extends PlayPlugin {
     }
 
     public List<FileInfo> getFileListOrder() {
+        if (!currentResponse.contentType.startsWith("text/html"))
+          return Collections.emptyList();
+
         String content = getResponseContent();
         List<String> namesInOrder = getFilesInResponse(content);
         List<FileInfo> filesInOrder = new ArrayList<FileInfo>(namesInOrder.size());
