@@ -12,7 +12,7 @@ public class StyleRequestHandler extends RequestHandler {
     @Override
     public String getTag(String src) {
         return "<link href=\"" + press.PluginConfig.contentHostingDomain + src
-                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\">"
+                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\" media=\"screen\">"
                 + (press.PluginConfig.htmlCompatible ? "" : "</link>") + "\n";
     }
 
