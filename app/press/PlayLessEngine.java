@@ -12,14 +12,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.asual.lesscss.LessOptions;
+import com.asual.lesscss.loader.ResourceLoader;
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.WrappedException;
 
 import play.Logger;
+import play.Play;
 import play.cache.Cache;
 
 import com.asual.lesscss.LessEngine;
 import com.asual.lesscss.LessException;
+import play.vfs.VirtualFile;
 
 /**
  * Copied and modified from
@@ -32,7 +36,15 @@ public class PlayLessEngine {
     static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
 
     PlayLessEngine() {
-        lessEngine = new LessEngine();
+        lessEngine = new LessEngine(new LessOptions(), new ResourceLoader() {
+          @Override public boolean exists(String path) throws IOException {
+            return Play.getVirtualFile(path).exists();
+          }
+
+          @Override public String load(String path, String charset) throws IOException {
+            return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString();
+          }
+        });
     }
 
     /**
