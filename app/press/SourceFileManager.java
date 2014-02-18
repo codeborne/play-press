@@ -206,10 +206,7 @@ public abstract class SourceFileManager extends PlayPlugin {
 
     public static void addFileListToCache(String cacheKey, Collection<FileInfo> originalList) {
         // Clone the file list
-        List<FileInfo> newList = new ArrayList<FileInfo>();
-        for (FileInfo fileInfo : originalList) {
-            newList.add(fileInfo);
-        }
+        List<FileInfo> newList = new ArrayList<FileInfo>(originalList);
 
         // Add a mapping between the request key and the list of files that
         // are compressed for the request
