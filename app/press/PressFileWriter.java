@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import play.Logger;
 import play.exceptions.UnexpectedException;
 import play.vfs.VirtualFile;
 import press.io.CompressedFile;
@@ -58,7 +59,7 @@ public class PressFileWriter {
             // Note that this flushes and closes the writer as well
             file.close();
         }
-        
+
         return file;
     }
 
@@ -83,6 +84,7 @@ public class PressFileWriter {
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String firstLine = reader.readLine();
+            reader.close();
             Matcher matcher = HEADER_PATTERN.matcher(firstLine);
             if (matcher.matches()) {
                 return true;
