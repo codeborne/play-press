@@ -1,18 +1,13 @@
 package press.io;
 
+import org.apache.commons.io.FileUtils;
+import play.Play;
+
 import java.io.File;
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-
-import play.Play;
 
 /**
  * @author jareware

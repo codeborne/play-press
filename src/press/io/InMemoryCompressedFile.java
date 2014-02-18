@@ -1,21 +1,14 @@
 package press.io;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
-
 import play.cache.Cache;
 import play.exceptions.UnexpectedException;
 import press.PluginConfig;
 import press.PressException;
 import press.PressLogger;
+
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class InMemoryCompressedFile extends CompressedFile {
     private static final String FILE_LIST_KEY = "InMemoryFileList";

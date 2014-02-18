@@ -1,9 +1,9 @@
 package press.io;
 
+import press.PluginConfig;
+
 import java.io.InputStream;
 import java.io.Writer;
-
-import press.PluginConfig;
 
 public abstract class CompressedFile {
     private String fileKey;

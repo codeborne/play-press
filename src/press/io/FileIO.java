@@ -1,20 +1,13 @@
 package press.io;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
 import play.Play;
 import play.exceptions.UnexpectedException;
 import play.vfs.VirtualFile;
 import press.PressException;
+
+import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 public class FileIO {
 

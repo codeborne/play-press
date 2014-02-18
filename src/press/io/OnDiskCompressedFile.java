@@ -1,19 +1,12 @@
 package press.io;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
 import play.exceptions.UnexpectedException;
 import play.vfs.VirtualFile;
 import press.PluginConfig;
 import press.PressException;
 import press.PressLogger;
+
+import java.io.*;
 
 public class OnDiskCompressedFile extends CompressedFile {
     private Writer writer;

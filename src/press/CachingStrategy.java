@@ -1,9 +1,9 @@
 package press;
 
+import play.templates.JavaExtensions;
+
 import java.util.Arrays;
 import java.util.List;
-
-import play.templates.JavaExtensions;
 
 public enum CachingStrategy {
     Always, Never, Change;

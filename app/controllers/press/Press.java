@@ -1,26 +1,18 @@
 package controllers.press;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import play.exceptions.UnexpectedException;
+import play.mvc.Controller;
+import press.*;
+import press.io.CompressedFile;
+import press.io.FileIO;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import play.exceptions.UnexpectedException;
-import play.mvc.Controller;
-import press.CachingStrategy;
-import press.PluginConfig;
-import press.ScriptCompressedFileManager;
-import press.ScriptCompressor;
-import press.ScriptRequestHandler;
-import press.StyleCompressedFileManager;
-import press.StyleCompressor;
-import press.StyleRequestHandler;
-import press.io.CompressedFile;
-import press.io.FileIO;
 
 public class Press extends Controller {
     public static final DateTimeFormatter httpDateTimeFormatter = DateTimeFormat

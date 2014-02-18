@@ -1,15 +1,11 @@
 package press;
 
+import press.io.CompressedFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-
-import play.PlayPlugin;
-import play.libs.Crypto;
-import play.templates.JavaExtensions;
-import press.io.CompressedFile;
-import press.io.FileIO;
 
 public abstract class Compressor {
     /**

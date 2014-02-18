@@ -1,11 +1,11 @@
 package press;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import play.mvc.Router;
 import play.vfs.VirtualFile;
 import press.io.FileIO;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class RequestHandler {
     Map<String, Boolean> files = new HashMap<String, Boolean>();

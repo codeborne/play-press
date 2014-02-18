@@ -1,21 +1,13 @@
 package press;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Writer;
-import java.util.ArrayList;
+import play.exceptions.UnexpectedException;
+import press.io.CompressedFile;
+import press.io.FileIO;
+
+import java.io.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import play.Logger;
-import play.exceptions.UnexpectedException;
-import play.vfs.VirtualFile;
-import press.io.CompressedFile;
-import press.io.FileIO;
 
 public class PressFileWriter {
     static final String PRESS_SIGNATURE = "press-1.0";

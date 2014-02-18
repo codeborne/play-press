@@ -1,21 +1,17 @@
 package press;
 
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import org.mozilla.javascript.ErrorReporter;
+import org.mozilla.javascript.EvaluatorException;
+import play.Logger;
+import press.io.FileIO;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
-
-import org.mozilla.javascript.ErrorReporter;
-import org.mozilla.javascript.EvaluatorException;
-
-import play.Logger;
-import play.vfs.VirtualFile;
-import press.io.CompressedFile;
-import press.io.FileIO;
-
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 public class ScriptCompressor extends Compressor {
     public static final String EXTENSION = ".js";

@@ -1,10 +1,8 @@
 package press;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import play.vfs.VirtualFile;
 import press.io.CompressedFile;
+
+import java.util.List;
 
 public abstract class CompressedFileManager {
     private PressFileWriter pressFileWriter;

@@ -1,16 +1,11 @@
 package press;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import press.io.FileIO;
+
+import java.io.*;
 import java.util.List;
 import java.util.Map;
-
-import press.io.CompressedFile;
-import press.io.FileIO;
-import com.yahoo.platform.yui.compressor.CssCompressor;
 
 public class StyleCompressor extends Compressor {
     public static final String EXTENSION = ".css";
