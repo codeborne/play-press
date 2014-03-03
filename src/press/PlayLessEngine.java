@@ -29,14 +29,14 @@ public class PlayLessEngine {
     static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
 
     PlayLessEngine() {
-        lessEngine = new LessEngine(new LessOptions(), new ResourceLoader() {
-          @Override public boolean exists(String path) throws IOException {
-            return Play.getVirtualFile(path).exists();
-          }
+        lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new LessEngine(new LessOptions(), new ResourceLoader() {
+            @Override public boolean exists(String path) throws IOException {
+                return Play.getVirtualFile(path).exists();
+            }
 
-          @Override public String load(String path, String charset) throws IOException {
-            return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString().replace("\r", "");
-          }
+            @Override public String load(String path, String charset) throws IOException {
+                return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString().replace("\r", "");
+            }
         });
     }
 
