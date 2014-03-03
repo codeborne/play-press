@@ -35,7 +35,7 @@ public class PlayLessEngine {
           }
 
           @Override public String load(String path, String charset) throws IOException {
-            return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString();
+            return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString().replace("\r", "");
           }
         });
     }
