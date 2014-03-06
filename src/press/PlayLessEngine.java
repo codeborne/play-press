@@ -53,7 +53,7 @@ public class PlayLessEngine {
      */
     public String get(File lessFile, boolean compress) {
         try {
-            String cacheKey = lessFile.getPath() + "." + latestModified(lessFile);
+            String cacheKey = lessFile.getName() + "." + latestModified(lessFile);
             CompressedFile cachedFile = CompressedFile.create(cacheKey, PluginConfig.css.compressedDir);
             if (cachedFile.exists())
               return IOUtils.toString(cachedFile.inputStream(), "UTF-8");
