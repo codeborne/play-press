@@ -1,5 +1,6 @@
 package press;
 
+import play.Logger;
 import play.Play;
 import play.mvc.Http;
 import play.mvc.Http.Request;
@@ -7,7 +8,6 @@ import play.mvc.Http.Response;
 import play.utils.Utils;
 import play.vfs.VirtualFile;
 
-import java.io.PrintStream;
 import java.util.Date;
 
 /**
@@ -30,8 +30,8 @@ public class StaticAssetManager {
                 handleResponse(file, request, response);
             } catch (Exception e) {
                 response.status = 500;
-                response.print("LESS processing failed:\n");
-                e.printStackTrace(new PrintStream(response.out));
+                response.print("LESS processing failed");
+                Logger.error(e, "LESS processing failed");
             }
             return true;
         }
@@ -60,8 +60,7 @@ public class StaticAssetManager {
         response.setHeader("ETag", etag);
     }
 
-    private void handleOk(Request request, Response response, VirtualFile file, String etag,
-            long lastModified) {
+    private void handleOk(Request request, Response response, VirtualFile file, String etag, long lastModified) {
         response.status = 200;
         response.print(StyleCompressor.lessEngine.get(file.getRealFile(), false));
         response.setHeader("Last-Modified",
