@@ -9,6 +9,7 @@ import org.mozilla.javascript.WrappedException;
 import play.Logger;
 import play.Play;
 import play.cache.Cache;
+import play.vfs.VirtualFile;
 
 import java.io.*;
 import java.util.Collections;
@@ -31,11 +32,17 @@ public class PlayLessEngine {
     PlayLessEngine() {
         lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new LessEngine(new LessOptions(), new ResourceLoader() {
             @Override public boolean exists(String path) throws IOException {
-                return Play.getVirtualFile(path).exists();
+              return Play.getVirtualFile(toRelative(path)) != null;
             }
 
             @Override public String load(String path, String charset) throws IOException {
-                return Play.getVirtualFile(path.replace(Play.applicationPath.getAbsolutePath() + "/", "")).contentAsString().replace("\r", "");
+              VirtualFile file = Play.getVirtualFile(toRelative(path));
+              if (file == null) throw new FileNotFoundException("Virtual path " + toRelative(path) + " not found");
+              return file.contentAsString().replace("\r", "");
+            }
+
+            private String toRelative(String path) {
+                return path.replace(Play.applicationPath.getAbsolutePath() + "/", "");
             }
         });
     }
