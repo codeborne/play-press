@@ -33,8 +33,8 @@ public abstract class RequestHandler {
         return getSourceManager().checkFileExists(fileName);
     }
 
-    public String add(String fileName, boolean packFile) {
-        return getSourceManager().add(fileName, packFile);
+    public void add(String fileName, boolean packFile) {
+        getSourceManager().add(fileName, packFile);
     }
 
     public void saveFileList() {

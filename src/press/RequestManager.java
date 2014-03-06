@@ -42,7 +42,7 @@ public class RequestManager {
             handler.checkForDuplicates(fileName);
 
             if (performCompression()) {
-                result += handler.add(fileName, packFile) + "\n";
+                handler.add(fileName, packFile);
             } else {
                 result += handler.getTag(Router.reverse(file));
             }
