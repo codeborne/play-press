@@ -34,7 +34,7 @@ public abstract class SourceFileManager extends PlayPlugin {
     String pressRequestStart;
     String pressRequestEnd;
 
-    // Directory where the source files are read from, eg "/public/javascripts"
+    // Directory where the source files are read from, eg "public/javascripts"
     String srcDir;
 
     // The key used to identify this request

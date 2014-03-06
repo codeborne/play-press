@@ -50,10 +50,10 @@ public class PluginConfig {
 
         public static class js {
             // The directory where source javascript files are read from
-            public static final String srcDir = "/public/javascripts/";
+            public static final String srcDir = "public/javascripts/";
 
             // The directory where compressed javascript files are written to
-            public static final String compressedDir = "/public/javascripts/press/";
+            public static final String compressedDir = "tmp/press/javascripts/";
 
             // Options for YUI JS compression
             public static final int lineBreak = -1;
@@ -65,10 +65,10 @@ public class PluginConfig {
 
         public static class css {
             // The directory where source css files are read from
-            public static final String srcDir = "/public/stylesheets/";
+            public static final String srcDir = "public/stylesheets/";
 
             // The directory where compressed css files are written to
-            public static final String compressedDir = "/public/stylesheets/press/";
+            public static final String compressedDir = "tmp/press/stylesheets/";
 
             // Options for YUI CSS compression
             public static final int lineBreak = -1;

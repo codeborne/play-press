@@ -15,7 +15,7 @@ public class OnDiskCompressedFile extends CompressedFile {
 
     public OnDiskCompressedFile(String filePath, String compressedDir) {
         super(filePath);
-        file = FileIO.getVirtualFile(compressedDir + filePath);
+        file = VirtualFile.open(new File(compressedDir, filePath));
     }
 
     @Override
@@ -154,12 +154,12 @@ public class OnDiskCompressedFile extends CompressedFile {
         PressLogger.trace("Deleting cached files");
 
         // Get the cache directory
-        VirtualFile dir = FileIO.getVirtualFile(compressedDir);
+        File dir = new File(compressedDir);
         if (!dir.exists() || !dir.isDirectory()) {
             return 0;
         }
 
-        int deletedFiles = deletePressFilesRecursively(dir.getRealFile(), extension);
+        int deletedFiles = deletePressFilesRecursively(dir, extension);
         PressLogger.trace("Deleted %d cached files", deletedFiles);
         return deletedFiles;
     }
@@ -178,7 +178,7 @@ public class OnDiskCompressedFile extends CompressedFile {
 
         // Second, recursively go through sub-directories of this directory
         FileFilter directoryFilter = new FileFilter() {
-            public boolean accept(File file) {
+            @Override public boolean accept(File file) {
                 return file.isDirectory();
             }
         };
