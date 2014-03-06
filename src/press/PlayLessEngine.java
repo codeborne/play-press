@@ -128,11 +128,13 @@ public class PlayLessEngine {
             while ((line = r.readLine()) != null) {
                 Matcher m = importPattern.matcher(line);
                 while (m.find()) {
-                    File file = new File(lessFile.getParentFile(), m.group(1));
-                    if (!file.exists())
-                        file = new File(lessFile.getParentFile(), m.group(1) + ".less");
-                    files.add(file);
-                    files.addAll(getImportsFromCacheOrFile(file));
+                    VirtualFile file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1));
+                    if (file == null && !m.group(1).endsWith(".less"))
+                        file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1) + ".less");
+                    if (file != null) {
+                      files.add(file.getRealFile());
+                      files.addAll(getImportsFromCacheOrFile(file.getRealFile()));
+                    }
                 }
             }
             return files;
