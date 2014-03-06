@@ -29,7 +29,7 @@ public class PlayLessEngine {
     LessEngine lessEngine;
     static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
 
-    PlayLessEngine() {
+    public PlayLessEngine() {
         lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new LessEngine(new LessOptions(), new ResourceLoader() {
             @Override public boolean exists(String path) throws IOException {
               return Play.getVirtualFile(toRelative(path)) != null;
@@ -133,7 +133,7 @@ public class PlayLessEngine {
         }
     }
 
-    protected String compile(File lessFile, boolean compress) {
+    public String compile(File lessFile, boolean compress) {
         try {
             String css = lessEngine.compile(lessFile, compress);
             // There seems to be a bug whereby \n's are sometimes escaped
@@ -143,7 +143,7 @@ public class PlayLessEngine {
         }
     }
 
-    public String handleException(File lessFile, LessException e) {
+    protected String handleException(File lessFile, LessException e) {
         Logger.warn(e, "Less exception");
 
         String filename = e.getFilename();
@@ -170,7 +170,7 @@ public class PlayLessEngine {
         return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
     }
 
-    public String formatMessage(String filename, int line, int column, String extract,
+    protected String formatMessage(String filename, int line, int column, String extract,
             String errorType) {
         return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \"[LESS ERROR] "
                 + String.format("%s:%s: %s (%s)", filename, line, extract, errorType) + "\"; }";
