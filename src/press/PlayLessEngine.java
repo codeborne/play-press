@@ -10,6 +10,7 @@ import play.Logger;
 import play.Play;
 import play.cache.Cache;
 import play.vfs.VirtualFile;
+import press.io.CompressedFile;
 
 import java.io.*;
 import java.util.Collections;
@@ -51,13 +52,20 @@ public class PlayLessEngine {
      * Get the CSS for this less file either from the cache, or compile it.
      */
     public String get(File lessFile, boolean compress) {
-        String cacheKey = "less_" + lessFile.getPath() + latestModified(lessFile);
-        String css = cacheGet(cacheKey, String.class);
-        if (css == null) {
-            css = compile(lessFile, compress);
-            cacheSet(cacheKey, css);
+        try {
+            String cacheKey = lessFile.getPath() + "." + latestModified(lessFile);
+            CompressedFile cachedFile = CompressedFile.create(cacheKey, PluginConfig.css.compressedDir);
+            if (cachedFile.exists())
+              return IOUtils.toString(cachedFile.inputStream(), "UTF-8");
+
+            String css = compile(lessFile, compress);
+            cachedFile.startWrite().write(css);
+            cachedFile.close();
+            return css;
         }
-        return css;
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -77,7 +85,7 @@ public class PlayLessEngine {
      * imports, the files they import, etc
      */
     public static Set<File> getAllImports(File lessFile) {
-        Set<File> imports = new HashSet<File>();
+        Set<File> imports = new HashSet<>();
         getAllImports(lessFile, imports);
         return imports;
     }
@@ -91,18 +99,18 @@ public class PlayLessEngine {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected static Set<File> getImportsFromCacheOrFile(File lessFile) {
         String cacheKey = "less_imports_" + lessFile.getPath() + lessFile.lastModified();
 
-        Set<File> files = cacheGet(cacheKey, Set.class);
-
+        Set<File> files = Cache.get(cacheKey, Set.class);
         if (files == null) {
             try {
                 files = getImportsFromFile(lessFile);
-                cacheSet(cacheKey, files);
+                Cache.set(cacheKey, files);
             } catch (IOException e) {
                 Logger.error(e, "IOException trying to determine imports in LESS file");
-                files = new HashSet<File>();
+                files = new HashSet<>();
             }
         }
         return files;
@@ -115,7 +123,7 @@ public class PlayLessEngine {
 
         BufferedReader r = new BufferedReader(new FileReader(lessFile));
         try {
-            Set<File> files = new HashSet<File>();
+            Set<File> files = new HashSet<>();
             String line;
             while ((line = r.readLine()) != null) {
                 Matcher m = importPattern.matcher(line);
@@ -174,22 +182,5 @@ public class PlayLessEngine {
             String errorType) {
         return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \"[LESS ERROR] "
                 + String.format("%s:%s: %s (%s)", filename, line, extract, errorType) + "\"; }";
-    }
-
-    private static <T> T cacheGet(String key, Class<T> clazz) {
-        try {
-            return Cache.get(key, clazz);
-        } catch (NullPointerException e) {
-            Logger.info("LESS module: Cache not initialized yet. Request to regular action required to initialize cache in DEV mode.");
-            return null;
-        }
-    }
-
-    private static void cacheSet(String key, Object value) {
-        try {
-            Cache.set(key, value);
-        } catch (NullPointerException e) {
-            Logger.info("LESS module: Cache not initialized yet. Request to regular action required to initialize cache in DEV mode.");
-        }
     }
 }

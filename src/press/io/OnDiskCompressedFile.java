@@ -79,7 +79,7 @@ public class OnDiskCompressedFile extends CompressedFile {
     public void close() {
         if (writer == null) {
             throw new UnexpectedException(
-                    "Writer has not yet been created. Call getWriter() and write to it.");
+                    "Writer has not yet been created. Call startWrite() and write to it.");
         }
 
         try {
