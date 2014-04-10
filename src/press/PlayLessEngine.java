@@ -43,7 +43,7 @@ public class PlayLessEngine {
             }
 
             private String toRelative(String path) {
-                return path.replace(Play.applicationPath.getAbsolutePath() + "/", "");
+                return path.replace(Play.applicationPath.getAbsolutePath() + File.separator, "");
             }
         });
     }
