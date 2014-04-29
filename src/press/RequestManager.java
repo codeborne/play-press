@@ -51,7 +51,7 @@ public class RequestManager {
         return result;
     }
 
-    public String compressedTag(boolean rqType, String key) {
+    public String compressedTag(boolean rqType, String key, String ... args) {
         RequestHandler handler = getRequestHandler(rqType);
         if (performCompression()) {
           String requestKey;
@@ -60,7 +60,7 @@ public class RequestManager {
             requestKey = key;
           }
           else requestKey =  handler.closeRequest();
-          return handler.getTag(handler.getCompressedUrl(requestKey));
+          return handler.getTag(handler.getCompressedUrl(requestKey), args);
         }
         return "";
     }

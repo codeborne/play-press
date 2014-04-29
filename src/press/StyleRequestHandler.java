@@ -10,9 +10,10 @@ public class StyleRequestHandler extends RequestHandler {
     }
 
     @Override
-    public String getTag(String src) {
+    public String getTag(String src, String... args) {
+        String media = args.length > 0 && args[0] != null ? "media=\"" + args[0] + "\"" : "";
         return "<link href=\"" + press.PluginConfig.contentHostingDomain + src
-                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\" media=\"screen\">"
+                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\" " + media + ">"
                 + (press.PluginConfig.htmlCompatible ? "" : "</link>") + "\n";
     }
 

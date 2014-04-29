@@ -10,7 +10,7 @@ import java.util.Map;
 public abstract class RequestHandler {
     Map<String, Boolean> files = new HashMap<String, Boolean>();
 
-    abstract String getTag(String src);
+    abstract String getTag(String src, String... args);
 
     abstract protected SourceFileManager getSourceManager();
 

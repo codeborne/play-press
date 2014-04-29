@@ -16,4 +16,4 @@
  *  See the plugin documentation for more information.
  *  
 }*
-${ press.Plugin.compressedCSSTag(_arg) }
+${ press.Plugin.compressedCSSTag(_arg, _media) }

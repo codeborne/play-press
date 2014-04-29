@@ -74,8 +74,8 @@ public class Plugin extends PlayPlugin {
     /**
      * Outputs the tag indicating where the compressed CSS should be included.
      */
-    public static String compressedCSSTag(String key) {
-        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_STYLE, key);
+    public static String compressedCSSTag(String key, String media) {
+        return rqManager.get().compressedTag(RequestManager.RQ_TYPE_STYLE, key, media);
     }
 
     @Override
