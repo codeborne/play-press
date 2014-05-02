@@ -54,6 +54,11 @@
         </fileset>
       </classpath>
     </javac>
+    <copy todir="tmp/test-classes">
+      <fileset dir="test">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="test" depends="compile-test">
