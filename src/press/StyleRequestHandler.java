@@ -1,5 +1,8 @@
 package press;
 
+import static press.PluginConfig.contentHostingDomain;
+import static press.PluginConfig.htmlCompatible;
+
 public class StyleRequestHandler extends RequestHandler {
     private SourceFileManager srcManager = new StyleFileManager();
     private CompressedFileManager compressManager = new StyleCompressedFileManager();
@@ -11,10 +14,10 @@ public class StyleRequestHandler extends RequestHandler {
 
     @Override
     public String getTag(String src, String... args) {
-        String media = args.length > 0 && args[0] != null ? "media=\"" + args[0] + "\"" : "";
-        return "<link href=\"" + press.PluginConfig.contentHostingDomain + src
-                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\" " + media + ">"
-                + (press.PluginConfig.htmlCompatible ? "" : "</link>") + "\n";
+        String media = args.length > 0 && args[0] != null ? " media=\"" + args[0] + "\"" : "";
+        return "<link href=\"" + contentHostingDomain + src
+                + "\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\"" + media + ">"
+                + (htmlCompatible ? "" : "</link>") + "\n";
     }
 
     @Override

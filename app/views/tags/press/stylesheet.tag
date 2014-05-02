@@ -12,8 +12,9 @@
  *
  *  eg:
  *  #{press.stylesheet src: "widget.css"}
- *  #{press.stylesheet src: "ui.css"}
+ *  #{press.stylesheet src: "ui.css", media:'screen'}
  *  #{press.stylesheet src: "validation.css"}
+ *  #{stylesheet 'print.css', media:'print'/}
  *  #{press.stylesheet src: "path/*.css"} <!-- include all CSS from "path" -->
  *  #{press.stylesheet src: "path/**.css"} <!-- recursively include all CSS from "path" -->
  *
@@ -36,4 +37,4 @@
     }
 
 }%
-${ press.Plugin.addCSS(_src, _compress) }
+${ press.Plugin.addCSS(_src, _compress, _media) }

@@ -33,7 +33,7 @@ public class RequestManager {
         return handler.getTag(src);
     }
 
-    public String addMultiFile(boolean rqType, String src, boolean packFile) {
+    public String addMultiFile(boolean rqType, String src, boolean packFile, String ... args) {
         RequestHandler handler = getRequestHandler(rqType);
         String baseUrl = handler.getSrcDir();
         String result = "";
@@ -44,7 +44,7 @@ public class RequestManager {
             if (performCompression()) {
                 handler.add(fileName, packFile);
             } else {
-                result += handler.getTag(Router.reverse(file));
+                result += handler.getTag(Router.reverse(file), args);
             }
         }
 

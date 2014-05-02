@@ -60,8 +60,8 @@ public class Plugin extends PlayPlugin {
      * Adds the given source file(s) to the CSS compressor, returning the file
      * signature to be output in HTML
      */
-    public static String addCSS(String src, boolean packFile) {
-        return rqManager.get().addMultiFile(RequestManager.RQ_TYPE_STYLE, src, packFile);
+    public static String addCSS(String src, boolean packFile, String media) {
+        return rqManager.get().addMultiFile(RequestManager.RQ_TYPE_STYLE, src, packFile, media);
     }
 
     /**

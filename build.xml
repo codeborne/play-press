@@ -1,45 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="press" default="build" basedir=".">
-	<property file="build.properties" />
-    
-    <path id="project.classpath">
-        <pathelement path="${play.path}/framework/classes"/>
-        <fileset dir="${play.path}/framework/lib">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${play.path}/framework">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="lib">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+  <property file="build.properties"/>
 
-    <target name="build" depends="compile">
-        <copy todir="tmp/classes">
-            <fileset dir="src">
-                <include name="**/*.properties"/>
-                <include name="**/*.xml"/>
-                <include name="**/play.plugins"/>
-                <include name="**/play.static"/>
-            </fileset>
-        </copy>
-        <jar destfile="lib/play-press.jar" basedir="tmp/classes">
-            <manifest>
-                <section name="Play-module">
-                    <attribute name="Specification-Title" value="press"/>
-                </section>
-            </manifest>
-        </jar>
-        <delete dir="tmp" />
-    </target>
+  <path id="project.classpath">
+    <pathelement path="${play.path}/framework/classes"/>
+    <fileset dir="${play.path}/framework/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${play.path}/framework">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
 
-    <target name="compile">
-        <mkdir dir="tmp/classes" />
-        <javac srcdir="src" destdir="tmp/classes" target="1.7" debug="true">
-            <classpath refid="project.classpath" />
-        </javac>
-    </target>
+  <target name="build" depends="compile, test">
+    <copy todir="tmp/classes">
+      <fileset dir="src">
+        <include name="**/*.properties"/>
+        <include name="**/*.xml"/>
+        <include name="**/play.plugins"/>
+        <include name="**/play.static"/>
+      </fileset>
+    </copy>
+    <jar destfile="lib/play-press.jar" basedir="tmp/classes">
+      <manifest>
+        <section name="Play-module">
+          <attribute name="Specification-Title" value="press"/>
+        </section>
+      </manifest>
+    </jar>
+    <delete dir="tmp"/>
+  </target>
 
+  <target name="compile">
+    <mkdir dir="tmp/classes"/>
+    <javac srcdir="src" destdir="tmp/classes" target="1.7" debug="true">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <target name="compile-test" depends="compile">
+    <mkdir dir="tmp/test-classes"/>
+    <javac destdir="tmp/test-classes" target="1.7" source="1.7" debug="true">
+      <src path="test"/>
+      <classpath>
+        <path path="tmp/classes"/>
+        <path refid="project.classpath"/>
+        <fileset dir="${play.path}/framework/lib-test">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="test" depends="compile-test">
+    <mkdir dir="tmp/test-results"/>
+    <junit maxmemory="128m" haltonfailure="false" failureproperty="tests-failed" fork="true">
+      <batchtest todir="tmp/test-results">
+        <fileset dir="tmp/test-classes" includes="**/*Test.class" excludes="**/Abstract*"/>
+        <formatter type="xml"/>
+        <formatter type="plain" usefile="false"/>
+      </batchtest>
+      <classpath>
+        <path path="tmp/classes"/>
+        <path path="tmp/test-classes"/>
+        <path refid="project.classpath"/>
+        <fileset dir="${play.path}/framework/lib-test">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </junit>
+    <fail if="tests-failed"/>
+  </target>
 </project>
