@@ -41,6 +41,7 @@ public class PluginTest {
   @Before
   public void setUp() throws URISyntaxException {
     Play.configuration = new Properties();
+    Play.configuration.setProperty("press.enabled", "false");
     PluginConfig.readConfig();
 
     URL mainCss = Thread.currentThread().getContextClassLoader().getResource("main.css");
