@@ -19,7 +19,7 @@ public class RequestManager {
         return rqType == RQ_TYPE_SCRIPT ? scriptRequestHandler : styleRequestHandler;
     }
 
-    public String addSingleFile(boolean rqType, String fileName) {
+    public String addSingleFile(boolean rqType, String fileName, String ... args) {
         RequestHandler handler = getRequestHandler(rqType);
         VirtualFile file = handler.checkFileExists(fileName);
 
@@ -30,7 +30,7 @@ public class RequestManager {
             src = Router.reverse(file);
         }
 
-        return handler.getTag(src);
+        return handler.getTag(src, args);
     }
 
     public String addMultiFile(boolean rqType, String src, boolean packFile, String ... args) {

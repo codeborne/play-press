@@ -23,6 +23,18 @@ public class PluginTest {
         Plugin.addCSS("main.css", false, "screen"));
   }
 
+  @Test
+  public void addSingleCss() {
+    assertEquals("<link href=\"/test/main.css\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\"></link>\n",
+        Plugin.addSingleCSS("main.css", null));
+  }
+
+  @Test
+  public void addSingleCssWithMedia() {
+    assertEquals("<link href=\"/test/main.css\" rel=\"stylesheet\" type=\"text/css\" charset=\"utf-8\" media=\"print\"></link>\n",
+        Plugin.addSingleCSS("main.css", "print"));
+  }
+
   @Before
   public void setUp() {
     Play.configuration = new Properties();

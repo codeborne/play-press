@@ -5,10 +5,10 @@
  *  for easy debugging.
  *
  *  eg:
- *  #{press.single-stylesheet "widget.css"}
+ *  #{press.single-stylesheet "widget.css", media:'screen'}
  *
  *  will output:
- *  <link href="/public/stylesheets/press/widget.min.css" rel="stylesheet" type="text/css" charset="utf-8"></link>
+ *  <link href="/public/stylesheets/press/widget.min.css" rel="stylesheet" type="text/css" charset="utf-8" media="screen"></link>
  *
  *  See the plugin documentation for more information.
  *  
@@ -20,4 +20,4 @@
         throw new play.exceptions.TagInternalException("src attribute cannot be empty for press.single-stylesheet tag");
     }
 }%
-${ press.Plugin.addSingleCSS(_src) }
+${ press.Plugin.addSingleCSS(_src, _media) }

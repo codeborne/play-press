@@ -44,8 +44,8 @@ public class Plugin extends PlayPlugin {
     /**
      * Add a single CSS file to compression
      */
-    public static String addSingleCSS(String fileName) {
-        return rqManager.get().addSingleFile(RequestManager.RQ_TYPE_STYLE, fileName);
+    public static String addSingleCSS(String fileName, String media) {
+        return rqManager.get().addSingleFile(RequestManager.RQ_TYPE_STYLE, fileName, media);
     }
 
     /**
