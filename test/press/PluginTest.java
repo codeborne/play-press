@@ -6,6 +6,9 @@ import org.junit.Test;
 import play.Play;
 import play.mvc.Router;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -36,13 +39,16 @@ public class PluginTest {
   }
 
   @Before
-  public void setUp() {
+  public void setUp() throws URISyntaxException {
     Play.configuration = new Properties();
     PluginConfig.readConfig();
 
-    PluginConfig.js.srcDir = "test";
-    PluginConfig.css.srcDir = "test";
-    Router.addRoute("GET", "/test/", "staticDir:test");
+    URL mainCss = Thread.currentThread().getContextClassLoader().getResource("main.css");
+    File cssDir = new File(mainCss.toURI()).getParentFile();
+    Play.applicationPath = cssDir.getParentFile();
+    PluginConfig.js.srcDir = cssDir.getName();
+    PluginConfig.css.srcDir = cssDir.getName();
+    Router.addRoute("GET", "/test/", "staticDir:" + cssDir.getName());
 
     new Plugin().beforeActionInvocation(null);
   }
