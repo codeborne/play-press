@@ -28,14 +28,19 @@ public class StyleCompressor extends Compressor {
         } else {
             in = FileIO.getReader(sourceFile);
         }
-
-        if (compress) {
+        try {
+          if (compress) {
             // Compress the CSS
             CssCompressor compressor = new CssCompressor(in);
             compressor.compress(out, PluginConfig.css.lineBreak);
-        } else {
+          }
+          else {
             // If the file should not be compressed, just copy it
             FileIO.write(in, out);
+          }
+        }
+        finally {
+          in.close();
         }
     }
 

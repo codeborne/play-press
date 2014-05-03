@@ -25,10 +25,11 @@ public class ScriptCompressor extends Compressor {
         private static final String FORMAT_STRING = "%s:%d (char %d) %s";
         String fileName;
 
-        public PressErrorReporter(String fileName) {
+        PressErrorReporter(String fileName) {
             this.fileName = fileName;
         }
 
+        @Override 
         public void warning(String message, String sourceName, int line, String lineSource,
                 int lineOffset) {
             if (line < 0 || (line == 1 && lineOffset == 0)) {
@@ -38,6 +39,7 @@ public class ScriptCompressor extends Compressor {
             }
         }
 
+        @Override 
         public void error(String message, String sourceName, int line, String lineSource,
                 int lineOffset) {
             if (line < 0 || (line == 1 && lineOffset == 0)) {
@@ -47,6 +49,7 @@ public class ScriptCompressor extends Compressor {
             }
         }
 
+        @Override 
         public EvaluatorException runtimeError(String message, String sourceName, int line,
                 String lineSource, int lineOffset) {
             error(message, sourceName, line, lineSource, lineOffset);
