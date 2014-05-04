@@ -3,6 +3,7 @@ package press;
 import org.junit.Before;
 import play.Play;
 import play.mvc.Router;
+import play.vfs.VirtualFile;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -25,10 +26,15 @@ public class AbstractPressTest {
     PluginConfig.readConfig();
 
     cssDir = findFile("public").getParentFile();
-    Play.applicationPath = cssDir.getParentFile();
-    PluginConfig.js.srcDir = cssDir.getName();
-    PluginConfig.css.srcDir = cssDir.getName();
-    Router.addRoute("GET", "/test/", "staticDir:" + cssDir.getName());
+    Play.applicationPath = cssDir;
+    PluginConfig.js.srcDir = "";
+    PluginConfig.css.srcDir = "";
+    Router.addRoute("GET", "/public/", "staticDir:public");
+
+    VirtualFile appRoot = VirtualFile.open(Play.applicationPath);
+    if (!Play.roots.contains(appRoot)) {
+      Play.roots.add(appRoot);
+    }
   }
   
   protected static File findFile(String filePath) {

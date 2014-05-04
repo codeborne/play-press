@@ -185,10 +185,6 @@ public class PluginConfig {
     }
 
     public static String addTrailingSlash(String dir) {
-        if (dir.charAt(dir.length() - 1) != '/') {
-            return dir + '/';
-        }
-
-        return dir;
+        return dir.endsWith("/") ? dir : dir + '/';
     }
 }
