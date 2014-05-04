@@ -1,13 +1,11 @@
-self: play -> press 1.3.5
+self: play -> press 2.0
 
 require:
     - play 1.2+
     - com.asual.lesscss -> lesscss-engine 1.3.3:
         transitive: false
     - local -> yuicompressor 2.4.8
-#    TODO Replace yuicompressor with
-#    - org.mozilla -> rhino 1.7R4
-
+    - com.google.javascript -> closure-compiler v20140407
     - org.mockito -> mockito-all 1.9.5
     
 repositories:

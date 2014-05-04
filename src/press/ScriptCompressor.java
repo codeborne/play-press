@@ -1,80 +1,57 @@
 package press;
 
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
-import org.mozilla.javascript.ErrorReporter;
-import org.mozilla.javascript.EvaluatorException;
-import play.Logger;
+import com.google.javascript.jscomp.CompilationLevel;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.Result;
+import com.google.javascript.jscomp.SourceFile;
 import press.io.FileIO;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.javascript.jscomp.SourceFile.fromFile;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+
 public class ScriptCompressor extends Compressor {
-    public static final String EXTENSION = ".js";
+  public static final String EXTENSION = ".js";
 
-    public static int clearCache() {
-        return clearCache(PluginConfig.js.compressedDir, EXTENSION);
+  public static int clearCache() {
+    return clearCache(PluginConfig.js.compressedDir, EXTENSION);
+  }
+
+  @Override
+  public void compress(File sourceFile, Writer out, boolean compress) throws IOException {
+    if (!compress) {
+      FileIO.write(FileIO.getReader(sourceFile), out);
+      return;
     }
+    List<SourceFile> externs = emptyList();
+    List<SourceFile> inputs = asList(fromFile(sourceFile));
 
-    static class PressErrorReporter implements ErrorReporter {
-        private static final String PREFIX = "[YUI Compressor] ";
-        private static final String FORMAT_STRING = "%s:%d (char %d) %s";
-        String fileName;
+    CompilerOptions options = new CompilerOptions();
+    CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
 
-        PressErrorReporter(String fileName) {
-            this.fileName = fileName;
-        }
+    com.google.javascript.jscomp.Compiler compiler = new com.google.javascript.jscomp.Compiler();
+    Result result = compiler.compile(externs, inputs, options);
 
-        @Override 
-        public void warning(String message, String sourceName, int line, String lineSource,
-                int lineOffset) {
-            if (line < 0 || (line == 1 && lineOffset == 0)) {
-                Logger.warn(PREFIX + message);
-            } else {
-                Logger.warn(PREFIX + FORMAT_STRING, fileName, line, lineOffset, message);
-            }
-        }
-
-        @Override 
-        public void error(String message, String sourceName, int line, String lineSource,
-                int lineOffset) {
-            if (line < 0 || (line == 1 && lineOffset == 0)) {
-                Logger.error(PREFIX + message);
-            } else {
-                Logger.error(PREFIX + FORMAT_STRING, fileName, line, lineOffset, message);
-            }
-        }
-
-        @Override 
-        public EvaluatorException runtimeError(String message, String sourceName, int line,
-                String lineSource, int lineOffset) {
-            error(message, sourceName, line, lineSource, lineOffset);
-            return new EvaluatorException(message);
-        }
+    if (result.success) {
+      out.write(compiler.toSource());
     }
-
-    @Override
-    public void compress(File sourceFile, Writer out, boolean compress) throws IOException {
-        if (!compress) {
-            FileIO.write(FileIO.getReader(sourceFile), out);
-            return;
-        }
-
-        ErrorReporter errorReporter = new PressErrorReporter(sourceFile.getName());
-        Reader in = FileIO.getReader(sourceFile);
-        JavaScriptCompressor compressor = new JavaScriptCompressor(in, errorReporter);
-        compressor.compress(out, PluginConfig.js.lineBreak, PluginConfig.js.munge,
-                PluginConfig.js.warn, PluginConfig.js.preserveAllSemiColons,
-                PluginConfig.js.preserveStringLiterals);
+    else {
+      throw new IllegalArgumentException("Unable to minify " + sourceFile +
+          "\nerrors: " + Arrays.toString(result.errors) +
+          "\nwarnings: " + Arrays.toString(result.warnings));
     }
+  }
 
-    @Override
-    public String getCompressedFileKey(List<FileInfo> componentFiles) {
-        Map<String, Long> files = FileInfo.getFileLastModifieds(componentFiles);
-        return CacheManager.getCompressedFileKey(files, EXTENSION);
-    }
+  @Override
+  public String getCompressedFileKey(List<FileInfo> componentFiles) {
+    Map<String, Long> files = FileInfo.getFileLastModifieds(componentFiles);
+    return CacheManager.getCompressedFileKey(files, EXTENSION);
+  }
 }
