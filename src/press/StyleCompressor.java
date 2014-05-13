@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class StyleCompressor extends Compressor {
     public static final String EXTENSION = ".css";
-    public static final PlayLessEngine lessEngine = new PlayLessEngine();
+    PlayLessEngine lessEngine = new PlayLessEngine();
 
     public static int clearCache() {
         return clearCache(PluginConfig.css.compressedDir, EXTENSION);
@@ -58,7 +58,7 @@ public class StyleCompressor extends Compressor {
             if (isLess(filePath)) {
                 File lessFile = new File(filePath);
                 if (lessFile.exists()) {
-                    files.put(filePath, PlayLessEngine.latestModified(lessFile));
+                    files.put(filePath, lessEngine.latestModified(lessFile));
                 }
             }
         }

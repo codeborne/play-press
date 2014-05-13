@@ -17,6 +17,7 @@ import java.util.Date;
  */
 public class StaticAssetManager {
     long startTime = System.currentTimeMillis();
+    private PlayLessEngine lessEngine = new PlayLessEngine();
 
     public boolean serveStatic(VirtualFile file, Request request, Response response) {
         if (file.getName().endsWith(".less")) {
@@ -39,7 +40,7 @@ public class StaticAssetManager {
     }
 
     private void handleResponse(VirtualFile file, Request request, Response response) {
-        long lastModified = StyleCompressor.lessEngine.latestModified(file.getRealFile());
+        long lastModified = lessEngine.latestModified(file.getRealFile());
         final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
 
         // If we're in dev mode, and the server was just restarted, reprocess
@@ -62,7 +63,7 @@ public class StaticAssetManager {
 
     private void handleOk(Request request, Response response, VirtualFile file, String etag, long lastModified) {
         response.status = 200;
-        response.print(StyleCompressor.lessEngine.get(file.getRealFile(), false));
+        response.print(lessEngine.get(file.getRealFile(), false));
         response.setHeader("Last-Modified",
                 Utils.getHttpDateFormatter().format(new Date(lastModified)));
         response.setHeader("ETag", etag);

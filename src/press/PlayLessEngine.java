@@ -2,8 +2,6 @@ package press;
 
 import com.asual.lesscss.LessEngine;
 import com.asual.lesscss.LessException;
-import com.asual.lesscss.LessOptions;
-import com.asual.lesscss.loader.ResourceLoader;
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.WrappedException;
 import play.Logger;
@@ -31,23 +29,7 @@ public class PlayLessEngine {
     static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
 
     public PlayLessEngine() {
-        lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new LessEngine(new LessOptions(), new ResourceLoader() {
-            @Override public boolean exists(String path) throws IOException {
-              return Play.getVirtualFile(toRelative(path)) != null;
-            }
-
-            @Override public String load(String path, String charset) throws IOException {
-              VirtualFile file = Play.getVirtualFile(toRelative(path));
-              if (file == null) {
-                throw new FileNotFoundException("Virtual path " + toRelative(path) + " not found in " + Play.applicationPath + "/ " + Play.roots);
-              }
-              return file.contentAsString().replace("\r", "");
-            }
-
-            private String toRelative(String path) {
-                return path.replace(Play.applicationPath.getAbsolutePath() + File.separator, "");
-            }
-        });
+        lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new PlayVirtualFileLessEngine();
     }
 
     /**
@@ -74,7 +56,7 @@ public class PlayLessEngine {
      * Returns the latest of the last modified dates of this file and all files
      * it imports
      */
-    public static long latestModified(File lessFile) {
+    public long latestModified(File lessFile) {
         long lastModified = lessFile.lastModified();
         for (File imported : getAllImports(lessFile)) {
             lastModified = Math.max(lastModified, imported.lastModified());

@@ -5,7 +5,7 @@ public class StyleCompressedFileManager extends CompressedFileManager {
         super(new StyleCompressor());
     }
 
-    public String getCompressedDir() {
+    @Override public String getCompressedDir() {
         return PluginConfig.css.compressedDir;
     }
 }
