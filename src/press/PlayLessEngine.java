@@ -36,12 +36,9 @@ public class PlayLessEngine {
      * Get the CSS for this less file either from the cache, or compile it.
      */
     public String get(File lessFile, boolean compress) {
-        if (Play.mode.isProd()) {
-          VirtualFile precompiled = VirtualFile.fromRelativePath(lessFile.getPath() + ".css");
-          if (precompiled != null && precompiled.exists()) {
-            return precompiled.contentAsString();
-          }
-        }
+        VirtualFile precompiled = VirtualFile.open(new File(Play.applicationPath, lessFile.getPath() + ".css"));
+        if (precompiled.exists())
+          return precompiled.contentAsString();
 
         try {
             String cacheKey = lessFile.getName() + "." + latestModified(lessFile);
