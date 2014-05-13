@@ -3,6 +3,7 @@ package press;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import play.Play;
 import play.cache.Cache;
 import play.cache.CacheImpl;
 
@@ -23,6 +24,7 @@ public class StyleCompressorTest extends AbstractPressTest {
   @Before
   public void mockCache() {
     Cache.cacheImpl = mock(CacheImpl.class);
+    Play.mode = Play.Mode.DEV;
     doReturn(true).when(Cache.cacheImpl).safeSet(anyString(), any(), anyInt());
     PluginConfig.inMemoryStorage = true;
   }
