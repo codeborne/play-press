@@ -38,7 +38,7 @@ public class PlayLessEngine {
     public String get(File lessFile, boolean compress) {
         File precompiled = new File(lessFile.getPath() + ".css");
         if (precompiled.exists()) {
-          Logger.info("Serving precompiled " + precompiled);
+          Logger.debug("Serving precompiled " + precompiled);
           return VirtualFile.open(precompiled).contentAsString();
         }
 
@@ -48,7 +48,7 @@ public class PlayLessEngine {
             if (cachedFile.exists())
               return IOUtils.toString(cachedFile.inputStream(), "UTF-8");
 
-            Logger.info("Compiling " + lessFile);
+            Logger.debug("Compiling " + lessFile);
             String css = compile(lessFile, compress);
             cachedFile.startWrite().write(css);
             cachedFile.close();
