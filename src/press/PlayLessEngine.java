@@ -38,7 +38,9 @@ public class PlayLessEngine {
 
             @Override public String load(String path, String charset) throws IOException {
               VirtualFile file = Play.getVirtualFile(toRelative(path));
-              if (file == null) throw new FileNotFoundException("Virtual path " + toRelative(path) + " not found");
+              if (file == null) {
+                throw new FileNotFoundException("Virtual path " + toRelative(path) + " not found in " + Play.applicationPath + "/ " + Play.roots);
+              }
               return file.contentAsString().replace("\r", "");
             }
 
