@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class StaticAssetManager {
     long startTime = System.currentTimeMillis();
-    private PlayLessEngine lessEngine = new PlayLessEngine();
+    private PlayLessEngine lessEngine = StyleCompressor.lessEngine;
 
     public boolean serveStatic(VirtualFile file, Request request, Response response) {
         if (file.getName().endsWith(".less")) {
