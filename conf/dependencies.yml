@@ -1,4 +1,4 @@
-self: play -> press 2.2
+self: play -> press 2.2.1
 
 require:
     - play 1.2+
