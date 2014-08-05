@@ -15,7 +15,7 @@ public class StyleRequestHandlerTest {
 
   @Before
   public void setUp() {
-    Play.configuration = new Properties();
+    if (Play.configuration == null) Play.configuration = new Properties();
     PluginConfig.readConfig();
   }
 

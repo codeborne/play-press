@@ -21,7 +21,7 @@ public class AbstractPressTest {
 
   @Before
   public void configureCssJsLocation() {
-    Play.configuration = new Properties();
+    if (Play.configuration == null) Play.configuration = new Properties();
     Play.configuration.setProperty("press.enabled", "false");
     PluginConfig.readConfig();
 
