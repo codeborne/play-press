@@ -8,6 +8,8 @@ import press.PressLogger;
 
 import java.io.*;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 public class OnDiskCompressedFile extends CompressedFile {
     private Writer writer;
     private VirtualFile file;
@@ -84,9 +86,11 @@ public class OnDiskCompressedFile extends CompressedFile {
 
         try {
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             throw new UnexpectedException(e);
+        }
+        finally {
+          closeQuietly(writer);
         }
         
         // Output was written to a temporary file, so rename it to overwrite the

@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 public class InMemoryCompressedFile extends CompressedFile {
     private static final String FILE_LIST_KEY = "InMemoryFileList";
     private InputStream inputStream;
@@ -87,9 +89,11 @@ public class InMemoryCompressedFile extends CompressedFile {
         }
         try {
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             throw new UnexpectedException(e);
+        }
+        finally {
+            closeQuietly(writer);
         }
 
         byte[] outBytes = outputStream.toByteArray();
