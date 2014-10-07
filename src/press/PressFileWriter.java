@@ -6,7 +6,6 @@ import press.io.FileIO;
 
 import java.io.*;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PressFileWriter {
@@ -44,7 +43,7 @@ public class PressFileWriter {
 
             long timeAfter = System.currentTimeMillis();
             PressLogger.trace("Time to compress files for '%s': %d milli-seconds",
-                    FileIO.getFileNameFromPath(file.name()), (timeAfter - timeStart));
+                    FileIO.getFileNameFromPath(file.name()), timeAfter - timeStart);
         } catch (Exception e) {
             throw new UnexpectedException(e);
         } finally {
@@ -74,14 +73,11 @@ public class PressFileWriter {
             if (!file.exists()) {
                 return false;
             }
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String firstLine = reader.readLine();
-            reader.close();
-            Matcher matcher = HEADER_PATTERN.matcher(firstLine);
-            if (matcher.matches()) {
-                return true;
+          try (FileReader in = new FileReader(file)) {
+            try (BufferedReader reader = new BufferedReader(in)) {
+              return HEADER_PATTERN.matcher(reader.readLine()).matches();
             }
-            return false;
+          }
         } catch (IOException e) {
             return false;
         }

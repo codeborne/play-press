@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import play.exceptions.UnexpectedException;
 import play.mvc.Controller;
+import play.db.jpa.NoTransaction;
 import press.*;
 import press.io.CompressedFile;
 import press.io.FileIO;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+@NoTransaction
 public class Press extends Controller {
     public static final DateTimeFormatter httpDateTimeFormatter = DateTimeFormat
             .forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
