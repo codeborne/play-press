@@ -56,12 +56,16 @@ public class PlayLessEngine {
 
     Logger.debug("Compiling " + lessFile);
     String css = compile(lessFile, compress);
-    try (Writer out = cachedFile.startWrite()) {
+    try {
+      Writer out = cachedFile.startWrite();
       out.write(css);
       return css;
     }
     catch (IOException e) {
       throw new RuntimeException(e);
+    }
+    finally {
+      cachedFile.close();
     }
   }
 
