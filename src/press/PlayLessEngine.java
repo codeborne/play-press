@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class PlayLessEngine {
 
   LessEngine lessEngine;
-  static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
+  static Pattern importPattern = Pattern.compile(".*@import\\s*[\"'](.*?)[\"'].*");
 
   public PlayLessEngine() {
     lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new PlayVirtualFileLessEngine();
