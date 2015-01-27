@@ -5,7 +5,8 @@ import com.asual.lesscss.LessException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.WrappedException;
-import play.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.Play;
 import play.cache.Cache;
 import play.vfs.VirtualFile;
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
  * /master/src/play/modules/less/PlayLessEngine.java LessEngine wrapper for Play
  */
 public class PlayLessEngine {
+  private static final Logger logger = LoggerFactory.getLogger(PlayLessEngine.class);
 
   LessEngine lessEngine;
   static Pattern importPattern = Pattern.compile(".*@import\\s*[\"'](.*?)[\"'].*");
@@ -39,7 +41,7 @@ public class PlayLessEngine {
   public String get(File lessFile, boolean compress) {
     File precompiled = new File(lessFile.getPath() + ".css");
     if (precompiled.exists()) {
-      Logger.debug("Serving precompiled " + precompiled);
+      logger.debug("Serving precompiled {}", precompiled);
       return VirtualFile.open(precompiled).contentAsString();
     }
 
@@ -54,7 +56,7 @@ public class PlayLessEngine {
       }
     }
 
-    Logger.debug("Compiling " + lessFile);
+    logger.debug("Compiling {}", lessFile);
     String css = compile(lessFile, compress);
     try {
       Writer out = cachedFile.startWrite();
@@ -111,7 +113,7 @@ public class PlayLessEngine {
         Cache.set(cacheKey, files);
       }
       catch (IOException e) {
-        Logger.error(e, "IOException trying to determine imports in LESS file");
+        logger.error("IOException trying to determine imports in LESS file", e);
         files = new HashSet<>();
       }
     }
@@ -154,7 +156,7 @@ public class PlayLessEngine {
   }
 
   protected String handleException(File lessFile, LessException e) {
-    Logger.warn(e, "Less exception");
+    logger.warn("Less exception", e);
 
     String filename = e.getFilename();
     List<String> extractList = e.getExtract();

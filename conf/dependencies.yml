@@ -1,7 +1,7 @@
-self: play -> press 2.2.8
+self: play -> press 2.2.9
 
 require:
-    - play 1.2+
+    - play 1.3+
     - com.asual.lesscss -> lesscss-engine 1.3.3:
         transitive: false
     - local -> yuicompressor 2.4.8

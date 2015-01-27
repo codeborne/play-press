@@ -1,6 +1,7 @@
 package press;
 
-import play.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.Play;
 import play.mvc.Http;
 import play.mvc.Http.Request;
@@ -16,6 +17,8 @@ import java.util.Date;
  * /master/src/play/modules/less/Plugin.java
  */
 public class StaticAssetManager {
+    private static final Logger logger = LoggerFactory.getLogger(StaticAssetManager.class);
+
     long startTime = System.currentTimeMillis();
     private PlayLessEngine lessEngine = StyleCompressor.lessEngine;
 
@@ -30,9 +33,9 @@ public class StaticAssetManager {
             try {
                 handleResponse(file, request, response);
             } catch (Exception e) {
-                response.status = 500;
-                response.print("LESS processing failed");
-                Logger.error(e, "LESS processing failed");
+              response.status = 500;
+              response.print("LESS processing failed");
+              logger.error("LESS processing failed", e);
             }
             return true;
         }
