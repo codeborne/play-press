@@ -2,7 +2,6 @@ package press;
 
 import com.asual.lesscss.LessEngine;
 import com.asual.lesscss.LessException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.WrappedException;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class PlayLessEngine {
   private static final Logger logger = LoggerFactory.getLogger(PlayLessEngine.class);
 
   LessEngine lessEngine;
-  static Pattern importPattern = Pattern.compile(".*@import\\s*[\"'](.*?)[\"'].*");
+  static Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
 
   public PlayLessEngine() {
     lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new PlayVirtualFileLessEngine();
@@ -125,20 +124,18 @@ public class PlayLessEngine {
       return Collections.emptySet();
     }
 
-    List<String> lines = FileUtils.readLines(lessFile.getRealFile());
+    String content = lessFile.contentAsString();
 
     Set<File> files = new HashSet<>();
     String virtualParentPath = lessFile.relativePath().replaceFirst("^\\{.*?\\}", "").replaceFirst("/[^/]*$", "");
-    for (String line : lines) {
-      Matcher m = importPattern.matcher(line);
-      while (m.find()) {
-        VirtualFile file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1));
-        if (file == null && !m.group(1).endsWith(".less"))
-          file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1) + ".less");
-        if (file != null) {
-          files.add(file.getRealFile());
-          files.addAll(getImportsFromCacheOrFile(file));
-        }
+    Matcher m = importPattern.matcher(content);
+    while (m.find()) {
+      VirtualFile file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1));
+      if (file == null && !m.group(1).endsWith(".less"))
+        file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1) + ".less");
+      if (file != null) {
+        files.add(file.getRealFile());
+        files.addAll(getImportsFromCacheOrFile(file));
       }
     }
 
