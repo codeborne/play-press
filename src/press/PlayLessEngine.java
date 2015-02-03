@@ -95,7 +95,7 @@ public class PlayLessEngine {
 
   protected static void getAllImports(File lessFile, Set<File> imports) {
     imports.add(lessFile);
-    for (File imported : getImportsFromCacheOrFile(lessFile)) {
+    for (File imported : getImportsFromCacheOrFile(VirtualFile.open(lessFile))) {
       if (!imports.contains(imported)) {
         getAllImports(imported, imports);
       }
@@ -103,8 +103,8 @@ public class PlayLessEngine {
   }
 
   @SuppressWarnings("unchecked")
-  protected static Set<File> getImportsFromCacheOrFile(File lessFile) {
-    String cacheKey = "less_imports_" + lessFile.getPath() + lessFile.lastModified();
+  protected static Set<File> getImportsFromCacheOrFile(VirtualFile lessFile) {
+    String cacheKey = "less_imports_" + lessFile.getRealFile() + lessFile.lastModified();
 
     Set<File> files = Cache.get(cacheKey, Set.class);
     if (files == null) {
@@ -120,23 +120,24 @@ public class PlayLessEngine {
     return files;
   }
 
-  protected static Set<File> getImportsFromFile(File lessFile) throws IOException {
+  protected static Set<File> getImportsFromFile(VirtualFile lessFile) throws IOException {
     if (!lessFile.exists()) {
       return Collections.emptySet();
     }
 
-    List<String> lines = FileUtils.readLines(lessFile);
+    List<String> lines = FileUtils.readLines(lessFile.getRealFile());
 
     Set<File> files = new HashSet<>();
+    String virtualParentPath = lessFile.relativePath().replaceFirst("^\\{.*?\\}", "").replaceFirst("/[^/]*$", "");
     for (String line : lines) {
       Matcher m = importPattern.matcher(line);
       while (m.find()) {
-        VirtualFile file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1));
+        VirtualFile file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1));
         if (file == null && !m.group(1).endsWith(".less"))
-          file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1) + ".less");
+          file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1) + ".less");
         if (file != null) {
           files.add(file.getRealFile());
-          files.addAll(getImportsFromCacheOrFile(file.getRealFile()));
+          files.addAll(getImportsFromCacheOrFile(file));
         }
       }
     }
