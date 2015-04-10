@@ -15,7 +15,6 @@ import java.io.InputStream;
 public class NodeLessEngine extends LessEngine {
   private static final Logger logger = LoggerFactory.getLogger(NodeLessEngine.class);
 
-
   public static boolean canBeUsed() {
     try {
       Process lessc = new ProcessBuilder("lessc", "-v").start();
@@ -33,7 +32,10 @@ public class NodeLessEngine extends LessEngine {
 
   @Override public String compile(File input, boolean compress) throws LessException {
     try {
-      Process lessc = new ProcessBuilder("lessc", compress ? "-x" : "", "--no-color", "--include-path=" + joinPlayRoots(), input.getPath())
+      String shellPath = Play.configuration.getProperty("press.shell", "bash");
+      String lesscPrefix = Play.configuration.getProperty("press.lessc.prefix", "lessc");
+      String lesscSuffix = Play.configuration.getProperty("press.lessc.suffix", "");
+      Process lessc = new ProcessBuilder(shellPath, "-c", lesscPrefix + " " + (compress ? "-x" : "") + " --no-color --include-path=" + joinPlayRoots() + " " + input.getPath() + lesscSuffix)
                          .directory(Play.applicationPath).redirectErrorStream(true).start();
       try (InputStream in = lessc.getInputStream()) {
         String css = IOUtils.toString(in, "UTF-8");

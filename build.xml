@@ -16,7 +16,7 @@
     </fileset>
   </path>
 
-  <target name="build" depends="compile, test">
+  <target name="build" depends="compile">
     <copy todir="tmp/classes">
       <fileset dir="src">
         <include name="**/*.properties"/>
