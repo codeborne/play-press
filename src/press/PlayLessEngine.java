@@ -1,7 +1,5 @@
 package press;
 
-import com.asual.lesscss.LessEngine;
-import com.asual.lesscss.LessException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,11 +26,12 @@ import java.util.regex.Pattern;
 public class PlayLessEngine {
   private static final Logger logger = LoggerFactory.getLogger(PlayLessEngine.class);
 
-  LessEngine lessEngine;
+  NodeLessEngine lessEngine;
   static Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
 
   public PlayLessEngine() {
-    lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new PlayVirtualFileLessEngine();
+    if (!NodeLessEngine.canBeUsed()) throw new RuntimeException("Cannot use lessc, not installed?");
+    lessEngine = new NodeLessEngine();
   }
 
   /**
@@ -159,18 +157,14 @@ public class PlayLessEngine {
     logger.warn("Less exception", e);
 
     String filename = e.getFilename();
-    List<String> extractList = e.getExtract();
-    String extract = null;
-    if (extractList != null) {
-      extract = extractList.toString();
-    }
 
     // LessEngine reports the file as null when it's not an @imported file
     if (filename == null) {
       filename = lessFile.getName();
     }
 
-    return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
+    return filename;
+    // TODO: return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
   }
 
   protected String formatMessage(String filename, int line, int column, String extract,

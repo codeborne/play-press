@@ -1,7 +1,5 @@
 package press;
 
-import com.asual.lesscss.LessEngine;
-import com.asual.lesscss.LessException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NodeLessEngine extends LessEngine {
+public class NodeLessEngine {
   private static final Logger logger = LoggerFactory.getLogger(NodeLessEngine.class);
 
   public static boolean canBeUsed() {
@@ -30,7 +28,7 @@ public class NodeLessEngine extends LessEngine {
     }
   }
 
-  @Override public String compile(File input, boolean compress) throws LessException {
+  public String compile(File input, boolean compress) throws LessException {
     try {
       String shellPath = Play.configuration.getProperty("press.shell", "bash");
       String lesscPrefix = Play.configuration.getProperty("press.lessc.prefix", "lessc");
