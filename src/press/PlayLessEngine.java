@@ -3,7 +3,6 @@ package press;
 import com.asual.lesscss.LessEngine;
 import com.asual.lesscss.LessException;
 import org.apache.commons.io.IOUtils;
-import org.mozilla.javascript.WrappedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.Play;
@@ -11,7 +10,10 @@ import play.cache.Cache;
 import play.vfs.VirtualFile;
 import press.io.CompressedFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -166,15 +168,6 @@ public class PlayLessEngine {
     // LessEngine reports the file as null when it's not an @imported file
     if (filename == null) {
       filename = lessFile.getName();
-    }
-
-    // Try to detect missing imports (flaky)
-    if (extract == null && e.getCause() instanceof WrappedException) {
-      WrappedException we = (WrappedException) e.getCause();
-      if (we.getCause() instanceof FileNotFoundException) {
-        FileNotFoundException fnfe = (FileNotFoundException) we.getCause();
-        extract = fnfe.getMessage();
-      }
     }
 
     return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
