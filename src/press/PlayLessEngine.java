@@ -144,9 +144,7 @@ public class PlayLessEngine {
 
   public String compile(File lessFile, boolean compress) {
     try {
-      String css = lessEngine.compile(lessFile, compress);
-      // There seems to be a bug whereby \n's are sometimes escaped
-      return css.replace("\\n", "\n");
+      return lessEngine.compile(lessFile, compress);
     }
     catch (LessException e) {
       return handleException(lessFile, e);
@@ -154,22 +152,12 @@ public class PlayLessEngine {
   }
 
   protected String handleException(File lessFile, LessException e) {
-    logger.warn("Less exception", e);
-
-    String filename = e.getFilename();
-
-    // LessEngine reports the file as null when it's not an @imported file
-    if (filename == null) {
-      filename = lessFile.getName();
-    }
-
-    return filename;
-    // TODO: return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
+    logger.error("Less error: {}", e.getMessage());
+    return formatLessError(e.getMessage());
   }
 
-  protected String formatMessage(String filename, int line, int column, String extract,
-                                 String errorType) {
+  protected String formatLessError(String error) {
     return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \"[LESS ERROR] "
-        + String.format("%s:%s: %s (%s)", filename, line, extract, errorType) + "\"; }";
+        + error + "\"; }";
   }
 }
