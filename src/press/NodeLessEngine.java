@@ -33,8 +33,9 @@ public class NodeLessEngine {
       String shellPath = Play.configuration.getProperty("press.shell", "bash");
       String lesscPrefix = Play.configuration.getProperty("press.lessc.prefix", "lessc");
       String lesscSuffix = Play.configuration.getProperty("press.lessc.suffix", "");
-      Process lessc = new ProcessBuilder(shellPath, "-c", lesscPrefix + " " + (compress ? "-x" : "") + " --no-color --include-path=" + joinPlayRoots() + " " + input.getPath() + lesscSuffix)
-                         .directory(Play.applicationPath).redirectErrorStream(true).start();
+      Process lessc = new ProcessBuilder(shellPath, "-o", "pipefail", "-c", lesscPrefix + " " + (compress ? "-x" : "") + " --no-color " +
+          "--include-path=" + joinPlayRoots() + " " + input.getPath() + lesscSuffix)
+          .directory(Play.applicationPath).redirectErrorStream(true).start();
       try (InputStream in = lessc.getInputStream()) {
         String css = IOUtils.toString(in, "UTF-8");
         if (lessc.waitFor() != 0) throw new LessException(css);

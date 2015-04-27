@@ -157,7 +157,7 @@ public class PlayLessEngine {
   }
 
   protected String formatLessError(String error) {
-    return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \"[LESS ERROR] "
-        + error + "\"; }";
+    return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \""
+        + ("[LESS ERROR]\n" + error).replace("\n", "\\00000a").replace("\"", "\\000022") + "\"; }";
   }
 }
