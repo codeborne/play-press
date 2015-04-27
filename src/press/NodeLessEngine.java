@@ -23,7 +23,7 @@ public class NodeLessEngine {
       }
     }
     catch (IOException e) {
-      logger.info("Using Rhino-based lessc that is very slow (install the official lessc to make it faster)");
+      logger.info("No lessc in path, will work in precompiled mode only");
       return false;
     }
   }

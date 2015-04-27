@@ -30,7 +30,7 @@ public class PlayLessEngine {
   static Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
 
   public PlayLessEngine() {
-    if (!NodeLessEngine.canBeUsed()) throw new RuntimeException("Cannot use lessc, not installed?");
+    if (!Play.usePrecompiled && !NodeLessEngine.canBeUsed()) throw new RuntimeException("Cannot use lessc, not installed?");
     lessEngine = new NodeLessEngine();
   }
 
