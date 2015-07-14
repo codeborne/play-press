@@ -1,6 +1,5 @@
 package press;
 
-import com.yahoo.platform.yui.compressor.CssCompressor;
 import press.io.FileIO;
 
 import java.io.*;
@@ -29,15 +28,7 @@ public class StyleCompressor extends Compressor {
             in = FileIO.getReader(sourceFile);
         }
         try {
-          if (compress) {
-            // Compress the CSS
-            CssCompressor compressor = new CssCompressor(in);
-            compressor.compress(out, PluginConfig.css.lineBreak);
-          }
-          else {
-            // If the file should not be compressed, just copy it
-            FileIO.write(in, out);
-          }
+          FileIO.write(in, out);
         }
         finally {
           in.close();

@@ -1,20 +1,19 @@
 package press;
 
-import com.asual.lesscss.LessEngine;
-import com.asual.lesscss.LessException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.mozilla.javascript.WrappedException;
-import play.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.Play;
 import play.cache.Cache;
 import play.vfs.VirtualFile;
 import press.io.CompressedFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,12 +24,14 @@ import java.util.regex.Pattern;
  * /master/src/play/modules/less/PlayLessEngine.java LessEngine wrapper for Play
  */
 public class PlayLessEngine {
+  private static final Logger logger = LoggerFactory.getLogger(PlayLessEngine.class);
 
-  LessEngine lessEngine;
-  static Pattern importPattern = Pattern.compile(".*@import\\s*\"(.*?)\".*");
+  NodeLessEngine lessEngine;
+  static Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
 
   public PlayLessEngine() {
-    lessEngine = NodeLessEngine.canBeUsed() ? new NodeLessEngine() : new PlayVirtualFileLessEngine();
+    if (!Play.usePrecompiled && !NodeLessEngine.canBeUsed()) throw new RuntimeException("Cannot use lessc, not installed?");
+    lessEngine = new NodeLessEngine();
   }
 
   /**
@@ -39,7 +40,7 @@ public class PlayLessEngine {
   public String get(File lessFile, boolean compress) {
     File precompiled = new File(lessFile.getPath() + ".css");
     if (precompiled.exists()) {
-      Logger.debug("Serving precompiled " + precompiled);
+      logger.debug("Serving precompiled {}", precompiled);
       return VirtualFile.open(precompiled).contentAsString();
     }
 
@@ -54,7 +55,7 @@ public class PlayLessEngine {
       }
     }
 
-    Logger.debug("Compiling " + lessFile);
+    logger.debug("Compiling {}", lessFile);
     String css = compile(lessFile, compress);
     try {
       Writer out = cachedFile.startWrite();
@@ -93,7 +94,7 @@ public class PlayLessEngine {
 
   protected static void getAllImports(File lessFile, Set<File> imports) {
     imports.add(lessFile);
-    for (File imported : getImportsFromCacheOrFile(lessFile)) {
+    for (File imported : getImportsFromCacheOrFile(VirtualFile.open(lessFile))) {
       if (!imports.contains(imported)) {
         getAllImports(imported, imports);
       }
@@ -101,8 +102,8 @@ public class PlayLessEngine {
   }
 
   @SuppressWarnings("unchecked")
-  protected static Set<File> getImportsFromCacheOrFile(File lessFile) {
-    String cacheKey = "less_imports_" + lessFile.getPath() + lessFile.lastModified();
+  protected static Set<File> getImportsFromCacheOrFile(VirtualFile lessFile) {
+    String cacheKey = "less_imports_" + lessFile.getRealFile() + lessFile.lastModified();
 
     Set<File> files = Cache.get(cacheKey, Set.class);
     if (files == null) {
@@ -111,31 +112,30 @@ public class PlayLessEngine {
         Cache.set(cacheKey, files);
       }
       catch (IOException e) {
-        Logger.error(e, "IOException trying to determine imports in LESS file");
+        logger.error("IOException trying to determine imports in LESS file", e);
         files = new HashSet<>();
       }
     }
     return files;
   }
 
-  protected static Set<File> getImportsFromFile(File lessFile) throws IOException {
+  protected static Set<File> getImportsFromFile(VirtualFile lessFile) throws IOException {
     if (!lessFile.exists()) {
       return Collections.emptySet();
     }
 
-    List<String> lines = FileUtils.readLines(lessFile);
+    String content = lessFile.contentAsString();
 
     Set<File> files = new HashSet<>();
-    for (String line : lines) {
-      Matcher m = importPattern.matcher(line);
-      while (m.find()) {
-        VirtualFile file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1));
-        if (file == null && !m.group(1).endsWith(".less"))
-          file = Play.getVirtualFile(lessFile.getParent() + "/" + m.group(1) + ".less");
-        if (file != null) {
-          files.add(file.getRealFile());
-          files.addAll(getImportsFromCacheOrFile(file.getRealFile()));
-        }
+    String virtualParentPath = lessFile.relativePath().replaceFirst("^\\{.*?\\}", "").replaceFirst("/[^/]*$", "");
+    Matcher m = importPattern.matcher(content);
+    while (m.find()) {
+      VirtualFile file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1));
+      if (file == null && !m.group(1).endsWith(".less"))
+        file = Play.getVirtualFile(virtualParentPath + "/" + m.group(1) + ".less");
+      if (file != null) {
+        files.add(file.getRealFile());
+        files.addAll(getImportsFromCacheOrFile(file));
       }
     }
 
@@ -144,9 +144,7 @@ public class PlayLessEngine {
 
   public String compile(File lessFile, boolean compress) {
     try {
-      String css = lessEngine.compile(lessFile, compress);
-      // There seems to be a bug whereby \n's are sometimes escaped
-      return css.replace("\\n", "\n");
+      return lessEngine.compile(lessFile, compress);
     }
     catch (LessException e) {
       return handleException(lessFile, e);
@@ -154,35 +152,12 @@ public class PlayLessEngine {
   }
 
   protected String handleException(File lessFile, LessException e) {
-    Logger.warn(e, "Less exception");
-
-    String filename = e.getFilename();
-    List<String> extractList = e.getExtract();
-    String extract = null;
-    if (extractList != null) {
-      extract = extractList.toString();
-    }
-
-    // LessEngine reports the file as null when it's not an @imported file
-    if (filename == null) {
-      filename = lessFile.getName();
-    }
-
-    // Try to detect missing imports (flaky)
-    if (extract == null && e.getCause() instanceof WrappedException) {
-      WrappedException we = (WrappedException) e.getCause();
-      if (we.getCause() instanceof FileNotFoundException) {
-        FileNotFoundException fnfe = (FileNotFoundException) we.getCause();
-        extract = fnfe.getMessage();
-      }
-    }
-
-    return formatMessage(filename, e.getLine(), e.getColumn(), extract, e.getType());
+    logger.error("Less error: {}", e.getMessage());
+    return formatLessError(e.getMessage());
   }
 
-  protected String formatMessage(String filename, int line, int column, String extract,
-                                 String errorType) {
-    return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \"[LESS ERROR] "
-        + String.format("%s:%s: %s (%s)", filename, line, extract, errorType) + "\"; }";
+  protected String formatLessError(String error) {
+    return "body:before {display: block; color: #c00; white-space: pre; font-family: monospace; background: #FDD9E1; border-top: 1px solid pink; border-bottom: 1px solid pink; padding: 10px; content: \""
+        + ("[LESS ERROR]\n" + error).replace("\n", "\\00000a").replace("\"", "\\000022") + "\"; }";
   }
 }

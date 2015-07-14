@@ -20,4 +20,4 @@
         throw new play.exceptions.TagInternalException("src attribute cannot be empty for press.single-stylesheet tag");
     }
 }%
-${ press.Plugin.addSingleCSS(_src, _media) }
+${ press.Plugin.addSingleCSS(_src, _media).raw() }

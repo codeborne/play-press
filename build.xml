@@ -16,7 +16,7 @@
     </fileset>
   </path>
 
-  <target name="build" depends="compile, test">
+  <target name="build" depends="compile">
     <copy todir="tmp/classes">
       <fileset dir="src">
         <include name="**/*.properties"/>
@@ -37,7 +37,7 @@
 
   <target name="compile">
     <mkdir dir="tmp/classes"/>
-    <javac srcdir="src" destdir="tmp/classes" target="1.7" debug="true">
+    <javac srcdir="src" destdir="tmp/classes" target="1.7" source="1.7" debug="true">
       <classpath refid="project.classpath"/>
     </javac>
   </target>
