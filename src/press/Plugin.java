@@ -8,7 +8,7 @@ import play.vfs.VirtualFile;
 import java.lang.reflect.Method;
 
 public class Plugin extends PlayPlugin {
-    static ThreadLocal<RequestManager> rqManager = new ThreadLocal<RequestManager>();
+    static final ThreadLocal<RequestManager> rqManager = new ThreadLocal<>();
     static StaticAssetManager assetManager;
 
     @Override
@@ -16,9 +16,6 @@ public class Plugin extends PlayPlugin {
         // Read the config each time the application is restarted
         PluginConfig.readConfig();
 
-        // Clear the asset cache
-        RequestManager.clearCache();
-        
         // Recreate the asset manager
         assetManager = new StaticAssetManager();
     }
