@@ -34,12 +34,11 @@ public class StyleCompressorTest extends AbstractPressTest {
   }
 
   @Test
-  public void canCompressCssFile() throws IOException {
+  public void compressDoesNotModifyCssFile_becauseItIsCompressedDuringBuild() throws IOException {
     StringWriter out = new StringWriter();
     compressor.compress(rawCssFile, out, true);
     String compressedCss = out.toString();
-    assertTrue(compressedCss.length() <= readFileToString(rawCssFile).length() / 1.2);
-    assertEquals(readFileToString(minCssFile), compressedCss);
+    assertEquals(readFileToString(rawCssFile), compressedCss);
   }
 
   @Test
@@ -48,13 +47,15 @@ public class StyleCompressorTest extends AbstractPressTest {
     compressor.compress(rawLessFile, out, false);
     assertEquals(readFileToString(rawCssFile), out.toString());
   }
+
+  String warning = "The compress option has been deprecated. We recommend you use a dedicated css minifier, for instance see less-plugin-clean-css.\n";
   
   @Test
   public void canConvertLessToCssWithCompression() throws IOException {
     StringWriter out = new StringWriter();
     compressor.compress(rawLessFile, out, true);
     String compressedLess = out.toString();
-    assertEquals(readFileToString(minCssFile), compressedLess);
+    assertEquals(warning + readFileToString(minCssFile), compressedLess);
   }
   
   @Test

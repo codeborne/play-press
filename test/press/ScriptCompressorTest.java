@@ -22,12 +22,10 @@ public class ScriptCompressorTest extends AbstractPressTest {
   }
 
   @Test
-  public void canCompressJavascriptFile() throws IOException {
+  public void compressDoesNotModifyJavascriptFile_becauseItIsCompressedDuringBuild() throws IOException {
     StringWriter out = new StringWriter();
     compressor.compress(rawJsFile, out, true);
     String compressedJS = out.toString();
-    assertTrue(compressedJS.length() < readFileToString(rawJsFile).length() / 2);
-    assertTrue(compressedJS.substring(0, 50), compressedJS.startsWith("(function("));
-    assertTrue(compressedJS.substring(compressedJS.length() - 30), compressedJS.endsWith(")(window);"));
+    assertEquals(readFileToString(rawJsFile), compressedJS);
   }
 }
