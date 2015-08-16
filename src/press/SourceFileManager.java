@@ -33,7 +33,7 @@ public abstract class SourceFileManager extends PlayPlugin {
     // The list of files compressed as part of this request
     Map<String, FileInfo> fileInfos;
 
-    public SourceFileManager(String fileType, String extension, String tagName, String compressedTagName, String srcDir) {
+    protected SourceFileManager(String fileType, String extension, String tagName, String compressedTagName, String srcDir) {
         this.fileInfos = new LinkedHashMap<>();
         this.fileType = fileType;
         this.extension = extension;
@@ -52,8 +52,6 @@ public abstract class SourceFileManager extends PlayPlugin {
 
     /**
      * Adds a file to the list of files to be compressed
-     * 
-     * @return the file request signature to be output in the HTML
      */
     public void add(String fileName, boolean compress) {
         if (compress) {
@@ -99,7 +97,7 @@ public abstract class SourceFileManager extends PlayPlugin {
             key += entry.getKey();
             // If we use the 'Change' caching strategy, make the modified
             // timestamp of each file part of the key.
-            if (PluginConfig.cache.equals(CachingStrategy.Change)) {
+            if (PluginConfig.cache == CachingStrategy.Change) {
                 key += entry.getValue().getLastModified();
             }
         }
@@ -117,7 +115,7 @@ public abstract class SourceFileManager extends PlayPlugin {
             // If the file list is not empty, then there have been files added
             // to compression but they will not be output. So throw an
             // exception telling the user he needs to add some files.
-            if (fileInfos.size() > 0) {
+            if (!fileInfos.isEmpty()) {
                 String msg = fileInfos.size() + " files added to compression with ";
                 msg += tagName + " tag but no " + compressedTagName + " tag was found. ";
                 msg += "You must include a " + compressedTagName + " tag in the template ";

@@ -8,7 +8,7 @@ public abstract class CompressedFileManager {
     private PressFileWriter pressFileWriter;
     private Compressor compressor;
 
-    public CompressedFileManager(Compressor compressor) {
+    protected CompressedFileManager(Compressor compressor) {
         this.compressor = compressor;
         this.pressFileWriter = new PressFileWriter(compressor);
     }
@@ -44,5 +44,5 @@ public abstract class CompressedFileManager {
         return pressFileWriter.writeCompressedFile(componentFiles, file);
     }
     
-    public abstract String getCompressedDir();
+    abstract String getCompressedDir();
 }

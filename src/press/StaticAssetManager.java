@@ -49,7 +49,7 @@ public class StaticAssetManager {
         // If we're in dev mode, and the server was just restarted, reprocess
         // the file because if config changed it can affect how the file is
         // rendered.
-        boolean reprocessFile = Play.mode.equals(Play.Mode.DEV) && startTime > lastModified;
+        boolean reprocessFile = Play.mode.isDev() && startTime > lastModified;
         if (request.isModified(etag, lastModified) || reprocessFile) {
             handleOk(request, response, file, etag, lastModified);
         } else {
@@ -58,7 +58,7 @@ public class StaticAssetManager {
     }
 
     private void handleNotModified(Request request, Response response, String etag) {
-        if (request.method.equals("GET")) {
+        if ("GET".equals(request.method)) {
             response.status = Http.StatusCode.NOT_MODIFIED;
         }
         response.setHeader("ETag", etag);

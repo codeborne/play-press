@@ -5,20 +5,22 @@ import play.vfs.VirtualFile;
 import press.io.FileIO;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class RequestHandler {
-    Map<String, Boolean> files = new HashMap<String, Boolean>();
+    private final Set<String> files = new HashSet<>();
 
     abstract String getTag(String src, String... args);
 
-    abstract protected SourceFileManager getSourceManager();
+    abstract SourceFileManager getSourceManager();
 
-    abstract protected CompressedFileManager getCompressedFileManager();
+    abstract CompressedFileManager getCompressedFileManager();
 
-    abstract public String getCompressedUrl(String requestKey);
+    abstract String getCompressedUrl(String requestKey);
 
-    abstract public String getSingleFileCompressionKey(String fileName);
+    abstract String getSingleFileCompressionKey(String fileName);
 
     protected String getSingleFileCompressionKey(String fileName, SourceFileManager tmpManager) {
         PressLogger.trace("Request to compress single file %s", fileName);
@@ -46,14 +48,13 @@ public abstract class RequestHandler {
     }
 
     protected void checkForDuplicates(String fileName) {
-        if (!files.containsKey(fileName)) {
-            files.put(fileName, true);
+        if (!files.contains(fileName)) {
+            files.add(fileName);
             return;
         }
 
         SourceFileManager srcManager = getSourceManager();
-        throw new DuplicateFileException(srcManager.getFileType(), fileName,
-                srcManager.getTagName());
+        throw new DuplicateFileException(srcManager.getFileType(), fileName, srcManager.getTagName());
     }
 
     protected static String getCompressedUrl(String action, String requestKey) {

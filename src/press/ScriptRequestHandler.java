@@ -11,7 +11,7 @@ public class ScriptRequestHandler extends RequestHandler {
 
     @Override
     public String getTag(String src, String... args) {
-        return "<script src=\"" + press.PluginConfig.contentHostingDomain + src
+        return "<script src=\"" + PluginConfig.contentHostingDomain + src
                 + "\" type=\"text/javascript\" language=\"javascript\" charset=\"utf-8\">"
                 + "</script>\n";
     }

@@ -12,7 +12,7 @@ public class PressFileFilter implements FileFilter {
         this.extension = extension;
     }
 
-    public boolean accept(File file) {
+    @Override public boolean accept(File file) {
         if (!file.getName().endsWith(extension)) {
             return false;
         }

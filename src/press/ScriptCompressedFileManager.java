@@ -5,7 +5,7 @@ public class ScriptCompressedFileManager extends CompressedFileManager {
         super(new ScriptCompressor());
     }
 
-    public String getCompressedDir() {
+    @Override public String getCompressedDir() {
         return PluginConfig.js.compressedDir;
     }
 }

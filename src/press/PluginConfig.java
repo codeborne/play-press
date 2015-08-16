@@ -1,7 +1,8 @@
 package press;
 
-import play.Play;
-import play.Play.Mode;
+import static play.Play.Mode.DEV;
+import static play.Play.Mode.PROD;
+import static play.Play.mode;
 
 public class PluginConfig {
     /**
@@ -9,14 +10,14 @@ public class PluginConfig {
      */
     public static class DefaultConfig {
         // Whether the plugin is enabled
-        public static final boolean enabled = (Play.mode == Mode.PROD);
+        public static final boolean enabled = mode == PROD;
 
         // The caching strategy
         public static final CachingStrategy cache = CachingStrategy.Change;
 
         // Whether the cache can be cleared through the web interface
         // Default is to be available in dev only
-        public static final boolean cacheClearEnabled = (Play.mode == Mode.DEV);
+        public static final boolean cacheClearEnabled = mode == DEV;
 
         // Whether to use the file system or memory to store compressed files
         public static final boolean inMemoryStorage = false;

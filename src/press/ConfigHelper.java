@@ -11,7 +11,7 @@ public class ConfigHelper {
 
     public static String getString(String configKey, String defaultValue) {
         String value = Play.configuration.getProperty(configKey);
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             return defaultValue;
         }
 
@@ -24,11 +24,11 @@ public class ConfigHelper {
 
     public static Boolean getBoolean(String configKey, Boolean defaultValue) {
         String asStr = Play.configuration.getProperty(configKey);
-        if (asStr == null || asStr.length() == 0) {
+        if (asStr == null || asStr.isEmpty()) {
             return defaultValue;
         }
 
-        if (asStr.equals("true") || asStr.equals("false")) {
+        if ("true".equals(asStr) || "false".equals(asStr)) {
             return Boolean.parseBoolean(asStr);
         }
 
@@ -41,7 +41,7 @@ public class ConfigHelper {
 
     public static Integer getInt(String configKey, Integer defaultValue) {
         String asStr = Play.configuration.getProperty(configKey);
-        if (asStr == null || asStr.length() == 0) {
+        if (asStr == null || asStr.isEmpty()) {
             return defaultValue;
         }
 

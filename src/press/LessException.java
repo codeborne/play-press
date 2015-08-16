@@ -1,15 +1,16 @@
 package press;
 
-public class LessException extends Exception {
-  private String filename;
+public class LessException extends RuntimeException {
+  private final String filename;
 
-  public LessException(String filename) {
-    super(filename);
+  public LessException(String message, String filename) {
+    super(message);
     this.filename = filename;
   }
 
-  public LessException(String message, Throwable cause) {
+  public LessException(String message, Throwable cause, String filename) {
     super(message, cause);
+    this.filename = filename;
   }
 
   public String getFilename() {

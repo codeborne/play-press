@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author jareware
  */
 public class PressFileGlobber {
-    static Pattern pattern = Pattern.compile("(?:.*/)?(\\*\\*?)\\.(\\w+)");
+    private static final Pattern pattern = Pattern.compile("(?:.*/)?(\\*\\*?)\\.(\\w+)");
 
     /**
      * Resolves a potentially globbed filename to a list of filenames:
@@ -36,7 +36,6 @@ public class PressFileGlobber {
      *            filename as given in template
      * @param sourceDir
      *            filename prefix as given in configuration
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static List<String> getResolvedFiles(String fileName, String sourceDir) {
