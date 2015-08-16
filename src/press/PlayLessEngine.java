@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 public class PlayLessEngine {
   private static final Logger logger = LoggerFactory.getLogger(PlayLessEngine.class);
 
-  NodeLessEngine lessEngine;
-  static Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
+  private final NodeLessEngine lessEngine;
+  private static final Pattern importPattern = Pattern.compile("@import\\s*[\"'](.*?)[\"']");
 
   public PlayLessEngine() {
     if (!Play.usePrecompiled && !NodeLessEngine.canBeUsed()) throw new RuntimeException("Cannot use lessc, not installed?");
@@ -147,13 +147,14 @@ public class PlayLessEngine {
       return lessEngine.compile(lessFile, compress);
     }
     catch (LessException e) {
-      return handleException(lessFile, e);
+      logger.error("Less error in file {}: {}", lessFile.getAbsolutePath(), e.getMessage());
+      if (Play.mode.isDev()) {
+        // Change the caller code so that it doesn't cache the broken CSS file
+        return formatLessError(e.getMessage());
+      }
+      else
+        throw e;
     }
-  }
-
-  protected String handleException(File lessFile, LessException e) {
-    logger.error("Less error: {}", e.getMessage());
-    return formatLessError(e.getMessage());
   }
 
   protected String formatLessError(String error) {
