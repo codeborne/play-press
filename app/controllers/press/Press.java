@@ -3,6 +3,8 @@ package controllers.press;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.exceptions.UnexpectedException;
 import play.mvc.Controller;
 import play.db.jpa.NoTransaction;
@@ -17,26 +19,29 @@ import java.io.UnsupportedEncodingException;
 
 @NoTransaction
 public class Press extends Controller {
-    public static final DateTimeFormatter httpDateTimeFormatter = DateTimeFormat
+    private static final DateTimeFormatter httpDateTimeFormatter = DateTimeFormat
             .forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+
+    private static final Logger logger = LoggerFactory.getLogger(Press.class);
 
     public static void getCompressedJS(String key) {
         key = FileIO.unescape(key);
         CompressedFile compressedFile = new ScriptCompressedFileManager().getCompressedFile(key);
-        renderCompressedFile(compressedFile, "JavaScript");
+        renderCompressedFile(key, compressedFile, "JavaScript");
     }
 
     public static void getCompressedCSS(String key) {
         key = FileIO.unescape(key);
         CompressedFile compressedFile = new StyleCompressedFileManager().getCompressedFile(key);
-        renderCompressedFile(compressedFile, "CSS");
+        renderCompressedFile(key, compressedFile, "CSS");
     }
 
-    private static void renderCompressedFile(CompressedFile compressedFile, String type) {
+    private static void renderCompressedFile(String key, CompressedFile compressedFile, String type) {
         flash.keep();
 
         if (compressedFile == null) {
-            renderBadResponse(type);
+            renderBadResponse(key, type);
+            return;
         }
 
         InputStream inputStream = compressedFile.inputStream();
@@ -65,7 +70,7 @@ public class Press extends Controller {
         // part of the key, so if the file changes, the key in the html file
         // will be modified, and the browser will request a new version. Each
         // version can therefore be cached indefinitely.
-        if (PluginConfig.cache.equals(CachingStrategy.Change)) {
+        if (PluginConfig.cache == CachingStrategy.Change) {
             // Cache for a year
             response.setHeader("Cache-Control", "max-age=" + 31536000);
             response.setHeader("Expires", httpDateTimeFormatter.print(new DateTime().plusYears(1)));
@@ -95,7 +100,7 @@ public class Press extends Controller {
         renderText("Cleared " + count + " CSS files from cache");
     }
 
-    private static void renderBadResponse(String fileType) {
+    private static void renderBadResponse(String key, String fileType) {
         String response = "/*\n";
         response += "The compressed " + fileType + " file could not be generated.\n";
         response += "This can occur in two situations:\n";
@@ -107,6 +112,7 @@ public class Press extends Controller {
         response += "2. There was an exception thrown while rendering the ";
         response += "page.\n";
         response += "*/";
+        logger.error("Bad response to " + key + " (" + fileType + "): " + response);
         renderBinaryResponse(response);
     }
 
