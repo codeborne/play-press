@@ -38,12 +38,15 @@ public class NodeLessEngine {
           .directory(Play.applicationPath).redirectErrorStream(true).start();
       try (InputStream in = lessc.getInputStream()) {
         String css = IOUtils.toString(in, "UTF-8");
-        if (lessc.waitFor() != 0) throw new LessException(css);
+        int exitCode = lessc.waitFor();
+        if (exitCode != 0) {
+          throw new LessException("lessc exited with error code " + exitCode + ": " + css, input.getAbsolutePath());
+        }
         return css;
       }
     }
     catch (IOException|InterruptedException e) {
-      throw new LessException("Failed to launch lessc for " + input, e);
+      throw new LessException("Failed to launch lessc for " + input, e, input.getAbsolutePath());
     }
   }
 
